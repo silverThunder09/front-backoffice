@@ -1,11 +1,15 @@
 const API_BASE_URL = (() => {
-  const host = window.location.hostname
-  if (host === 'localhost' || host === 'https://front-backoffice-khaki.vercel.app/') {
-    return `https://front-backoffice-khaki.vercel.app/`
+  const host = window.location.hostname;
+  
+  // 1. 로컬(내 컴퓨터)에서 테스트할 때
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return 'http://localhost:8080'; // 실제 백엔드 서버 주소
   }
-  return 'https://front-backoffice-khaki.vercel.app/'
-
-})()
+  
+  // 2. 나중에 백엔드를 배포했을 때 (예: AWS, Cloudtype 등)
+  // 지금은 백엔드 배포 전이므로 로컬 주소를 쓰거나, 배포 후의 백엔드 URL을 적어주세요.
+  return 'https://front-backoffice-khaki.vercel.app/'; 
+})();
 
 const labels = {
   roles: {
