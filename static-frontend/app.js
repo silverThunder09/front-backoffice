@@ -1,10 +1,10 @@
 const API_BASE_URL = (() => {
   const host = window.location.hostname
-  if (host === 'localhost' || host === '127.0.0.1') {
-    return `http://${host}:8080`
+  if (host === 'localhost' || host === 'https://front-backoffice-khaki.vercel.app/') {
+    return `https://front-backoffice-khaki.vercel.app/`
   }
-  return 'http://localhost:8080'
-  
+  return 'https://front-backoffice-khaki.vercel.app/'
+
 })()
 
 const labels = {
