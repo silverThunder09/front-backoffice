@@ -1,5 +1,5 @@
 const API_BASE_URL = (() => {
-  const host = window.location.hostname;
+  const host = 'http://localhost:8080';
   
   // 1. 로컬(내 컴퓨터)에서 테스트할 때
   if (host === 'localhost' || host === '127.0.0.1') {
