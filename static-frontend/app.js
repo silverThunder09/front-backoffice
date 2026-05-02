@@ -1,5 +1,6 @@
 // app.js
-const API_BASE_URL = 'http://localhost:8080'; 
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8080`;
+
 
 // 만약 나중에 자동으로 주소가 바뀌길 원한다면 아래처럼 써야 합니다.
 /*
@@ -53,7 +54,7 @@ const db = {
 }
 
 let state = {
-  admin: JSON.parse(localStorage.getItem('staticAdmin') || 'null'),
+  admin: null,
   authView: 'login',
   page: 'dashboard',
   keyword: '',
@@ -75,13 +76,24 @@ function inferRole(email) {
 async function apiRequest(endpoint, options = {}) {
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-    })
+  ...options,
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json',
+    ...(options.headers || {}),
+  },
+})
+
+if (response.status === 401) {
+  localStorage.removeItem('staticAdmin')
+  state.admin = null
+  state.synced = false
+  state.loginMessage = '로그인이 필요합니다. 다시 로그인해주세요.'
+  render()
+  return { httpStatus: 401, message: '로그인이 필요합니다.' }
+}
+
+
     const text = await response.text()
     if (!text) return { httpStatus: response.status, message: response.ok ? '성공' : response.statusText }
     try {
@@ -248,13 +260,22 @@ async function login(email, password) {
   })
 
   if (response.httpStatus === 200 || response.httpStatus === 201) {
-    state.admin = { email, role: inferRole(email) }
-    localStorage.setItem('staticAdmin', JSON.stringify(state.admin))
-    await syncFromBackend()
-    state.synced = true
+  state.admin = { email, role: inferRole(email) }
+  localStorage.setItem('staticAdmin', JSON.stringify(state.admin))
+
+  await syncFromBackend()
+
+  if (!state.admin) {
+    state.loginMessage = '로그인 세션이 유지되지 않았습니다. 쿠키 설정을 확인해주세요.'
     render()
     return
   }
+
+  state.synced = true
+  render()
+  return
+}
+
 
   // 실패 시 무조건 실패 메시지만 출력 (Mock 로그인 제거)
   state.loginMessage = response.message || '로그인에 실패했습니다.'
