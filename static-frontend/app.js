@@ -1,5 +1,5 @@
 // app.js
-const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8080`;
+const API_BASE_URL = `https://front-backoffice-khaki.vercel.app`;
 
 
 // 만약 나중에 자동으로 주소가 바뀌길 원한다면 아래처럼 써야 합니다.
